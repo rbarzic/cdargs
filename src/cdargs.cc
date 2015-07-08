@@ -634,7 +634,7 @@ void
 list_from_dir(const char* name) {
 
     string previous_dir = "";
-    if(name == "..") {
+    if(strcmp( name, "..") == 0) {
         previous_dir = get_cwd_as_string();
     }
     // Checking, Changing and Reading
@@ -1140,7 +1140,7 @@ void display_list(void) {
         }
       
         // Compose format string for printw. Notice %% to represent literal %
-        sprintf(description_format, " [%%-%ds] %%c%%s", actual_maxlength );
+        sprintf(description_format, " [%%-%ds] %%c%%s", (int)actual_maxlength );
       
         printw(description_format, desc.c_str(), validmarker,path.c_str());
         if (pos == CurrPosition - yoffset) {

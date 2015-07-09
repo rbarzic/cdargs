@@ -31,12 +31,12 @@ function _cdargs_get_dir ()
     local bookmark extrapath
     # if there is one exact match (possibly with extra path info after it),
     # then just use that match without calling cdargs
-    if [ -e "$HOME/.cdargs" ]; then
-        dir=`grep "^$1 " "$HOME/.cdargs"`
+    if [ -e "$CDARGS_HOME/.cdargs" ]; then
+        dir=`grep "^$1 " "$CDARGS_HOME/.cdargs"`
         if [ -z "$dir" ]; then
             bookmark="${1/\/*/}"
             if [ "$bookmark" != "$1" ]; then
-                dir=`grep "^$bookmark " "$HOME/.cdargs"`
+                dir=`grep "^$bookmark " "$CDARGS_HOME/.cdargs"`
                 extrapath=`echo "$1" | sed 's#^[^/]*/#/#'`
             fi
         fi
@@ -48,8 +48,8 @@ function _cdargs_get_dir ()
         # note: intentionally retain any extra path to add back to selection.
         dir=
         if cdargs --noresolve "${1/\/*/}"; then
-            dir=`cat "$HOME/.cdargsresult"`
-            rm -f "$HOME/.cdargsresult";
+            dir=`cat "$CDARGS_HOME/.cdargsresult"`
+            rm -f "$CDARGS_HOME/.cdargsresult";
         fi
     fi
     if [ -z "$dir" ]; then
@@ -166,16 +166,16 @@ function mark ()
     local tmpfile
 
     # first clear any bookmarks with this same alias, if file exists
-    if [[ "$CDARGS_NODUPS" && -e "$HOME/.cdargs" ]]; then
+    if [[ "$CDARGS_NODUPS" && -e "$CDARGS_HOME/.cdargs" ]]; then
         tmpfile=`echo ${TEMP:-${TMPDIR:-/tmp}} | sed -e "s/\\/$//"`
         tmpfile=$tmpfile/cdargs.$USER.$$.$RANDOM
-        grep -v "^$1 " "$HOME/.cdargs" > $tmpfile && 'mv' -f $tmpfile "$HOME/.cdargs";
+        grep -v "^$1 " "$CDARGS_HOME/.cdargs" > $tmpfile && 'mv' -f $tmpfile "$CDARGS_HOME/.cdargs";
     fi
     # add the alias to the list of bookmarks
     cdargs --add=":$1:`pwd`"; 
     # sort the resulting list
     if [ "$CDARGS_SORT" ]; then
-        sort -o "$HOME/.cdargs" "$HOME/.cdargs";
+        sort -o "$CDARGS_HOME/.cdargs" "$CDARGS_HOME/.cdargs";
     fi
 }
 # Oh, no! Not overwrite 'm' for stefan! This was 
@@ -214,11 +214,11 @@ function _cdargs_aliases ()
 {
     local cur bookmark dir strip oldIFS
     COMPREPLY=()
-    if [ -e "$HOME/.cdargs" ]; then
+    if [ -e "$CDARGS_HOME/.cdargs" ]; then
         cur=${COMP_WORDS[COMP_CWORD]}
         if [ "$cur" != "${cur/\//}" ]; then # if at least one /
             bookmark="${cur/\/*/}"
-            dir=`grep "^$bookmark " "$HOME/.cdargs" | sed 's#^[^ ]* ##'`
+            dir=`grep "^$bookmark " "$CDARGS_HOME/.cdargs" | sed 's#^[^ ]* ##'`
             if [ -n "$dir" -a "$dir" = "${dir/
 /}" -a -d "$dir" ]; then
                 strip="${dir//?/.}"
@@ -231,7 +231,7 @@ function _cdargs_aliases ()
                 IFS="$oldIFS"
             fi
         else
-            COMPREPLY=( $( (echo $cur ; cat "$HOME/.cdargs") | \
+            COMPREPLY=( $( (echo $cur ; cat "$CDARGS_HOME/.cdargs") | \
                            awk 'BEGIN {first=1}
                                  {if (first) {cur=$0; l=length(cur); first=0}
                                  else if (substr($1,1,l) == cur) {print $1}}' ) )

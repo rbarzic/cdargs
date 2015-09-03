@@ -198,7 +198,7 @@ function mark ()
 function ca ()
 {
     # add the alias to the list of bookmarks
-    cdargs --add=":$1:`pwd`"; 
+    cdargs -f $CDARGS_HOME/.cdargs --add=":$1:`pwd`"; 
 }
 
 # --------------------------------------------- #

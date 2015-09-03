@@ -49,7 +49,7 @@
   :prefix "cdargs-"
   :group 'editing-basics)
 
-(defcustom cdargs-list-file "~/.cdargs"
+(defcustom cdargs-list-file (concat (getenv "CDARGS_HOME") "/.cdargs")
   "The filename of the cdargs bookmarks."
   :type 'string
   :group 'cdargs)
